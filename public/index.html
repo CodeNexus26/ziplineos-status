@@ -23,9 +23,11 @@
             --color-text-muted: #64748B;
             --color-accent-cyan: #06B6D4;
             --color-accent-violet: #8B5CF6;
-            --color-up: #06B6D4;
-            --color-down: #F43F5E;
+            --color-up: #22C55E;
+            --color-mild: #FACC15;
             --color-degraded: #F59E0B;
+            --color-down: #F43F5E;
+            --color-no-data: rgba(148, 163, 184, 0.18);
             --color-border: rgba(255, 255, 255, 0.08);
             --color-border-hover: rgba(255, 255, 255, 0.15);
             --brand-gradient: linear-gradient(45deg, #8B5CF6 0%, #4989E5 66%, #06B6D4 100%);
@@ -34,15 +36,8 @@
             --font-body: "Work Sans", system-ui, -apple-system, sans-serif;
         }
 
-        *, *::before, *::after {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        html {
-            scroll-behavior: smooth;
-        }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
 
         body {
             background: var(--color-canvas);
@@ -74,10 +69,7 @@
             pointer-events: none;
         }
 
-        ::selection {
-            background: rgba(6, 182, 212, 0.25);
-            color: #F1F5F9;
-        }
+        ::selection { background: rgba(6, 182, 212, 0.25); color: #F1F5F9; }
 
         h1, h2, h3, h4 {
             font-family: var(--font-heading);
@@ -92,12 +84,9 @@
             text-decoration: none;
             transition: color 0.2s ease;
         }
+        a:hover { color: #22D3EE; }
 
-        a:hover {
-            color: #22D3EE;
-        }
-
-        /* ---- Navbar (matches marketing site Navbar.tsx: h-20 max-w-7xl px-6) ---- */
+        /* ---- Navbar — matches marketing site Navbar.tsx ---- */
         nav {
             position: sticky;
             top: 0;
@@ -109,29 +98,25 @@
             -webkit-backdrop-filter: blur(20px);
             border-bottom: 1px solid rgba(255, 255, 255, 0.06);
         }
-
         .nav-inner {
             position: relative;
-            max-width: 80rem; /* max-w-7xl = 1280px */
+            max-width: 80rem;
             margin: 0 auto;
-            padding: 0 24px; /* px-6 */
+            padding: 0 24px;
             height: 100%;
         }
-
         .logo-link {
             position: absolute;
             left: 24px;
             top: 50%;
             transform: translateY(-50%);
-            height: 32px; /* h-8 — same as marketing site */
+            height: 32px;
             display: inline-flex;
             align-items: center;
-            gap: 12px; /* gap-3 */
+            gap: 8px; /* gap-2 — matches Logo.tsx in marketing site */
             text-decoration: none;
             line-height: 1;
         }
-
-        /* Hard-pin the logo against the global a:hover color change. */
         .logo-link:hover,
         .logo-link:focus,
         .logo-link:active {
@@ -139,17 +124,15 @@
             opacity: 1;
             text-decoration: none;
         }
-
         .logo-mark {
-            height: 100%; /* h-full of the 32px parent */
+            height: 100%;
             width: auto;
             user-select: none;
             -webkit-user-drag: none;
             pointer-events: none;
         }
-
         .logo-wordmark {
-            height: 80%; /* h-[80%] of the 32px parent = 25.6px */
+            height: 80%;
             width: auto;
             display: block;
             pointer-events: none;
@@ -159,10 +142,8 @@
         .hero {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 80px 24px 48px;
-            text-align: left;
+            padding: 80px 24px 32px;
         }
-
         .status-banner {
             display: inline-flex;
             align-items: center;
@@ -177,11 +158,9 @@
             font-size: 14px;
             margin-bottom: 24px;
         }
-
         .status-banner.up { color: var(--color-up); }
         .status-banner.degraded { color: var(--color-degraded); }
         .status-banner.down { color: var(--color-down); }
-
         .status-dot {
             width: 8px;
             height: 8px;
@@ -190,18 +169,15 @@
             box-shadow: 0 0 12px currentColor;
             animation: pulse 2s ease-in-out infinite;
         }
-
         @keyframes pulse {
             0%, 100% { opacity: 1; transform: scale(1); }
             50% { opacity: 0.6; transform: scale(0.85); }
         }
-
         .hero h1 {
             font-size: clamp(2rem, 5vw, 3rem);
             font-weight: 800;
             margin-bottom: 16px;
         }
-
         .hero p {
             color: var(--color-text-secondary);
             font-size: 1.125rem;
@@ -209,241 +185,172 @@
             line-height: 1.6;
         }
 
-        /* ---- Range selector ---- */
-        .range {
+        /* ---- Section header — "Uptime over the past 90 days" ---- */
+        .section-head {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 0 24px 24px;
+            padding: 0 24px 16px;
             display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 16px;
-            flex-wrap: wrap;
-        }
-
-        .range h2 {
-            font-size: 1.5rem;
-            font-weight: 700;
-        }
-
-        .range-tabs {
-            display: inline-flex;
-            background: rgba(17, 24, 39, 0.5);
-            border: 1px solid var(--color-border);
-            border-radius: 9999px;
-            padding: 4px;
-            gap: 2px;
-        }
-
-        .range-tabs button {
-            background: transparent;
-            border: 0;
-            padding: 6px 14px;
-            color: var(--color-text-secondary);
-            font-family: var(--font-heading);
-            font-weight: 500;
+            align-items: baseline;
+            justify-content: flex-end;
+            color: var(--color-text-muted);
             font-size: 13px;
-            border-radius: 9999px;
-            cursor: pointer;
-            transition: all 0.2s ease;
+            font-family: var(--font-heading);
+        }
+        .section-head strong {
+            color: var(--color-text-secondary);
+            font-weight: 600;
         }
 
-        .range-tabs button:hover {
-            color: var(--color-text-primary);
-        }
-
-        .range-tabs button.active {
-            background: var(--brand-gradient);
-            color: #0A0F1E;
-            font-weight: 700;
-        }
-
-        /* ---- Cards grid ---- */
-        .cards {
+        /* ---- Status rows ---- */
+        .rows {
             max-width: 1200px;
             margin: 0 auto;
             padding: 0 24px 80px;
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
         }
 
-        .card {
+        .row {
             background: rgba(17, 24, 39, 0.7);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border: 1px solid var(--color-border);
             border-radius: 12px;
-            padding: 20px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            overflow: hidden;
+            padding: 20px 24px;
+            transition: border-color 0.25s ease, box-shadow 0.25s ease;
         }
-
-        .card::before {
-            content: "";
-            position: absolute;
-            left: 0;
-            top: 0;
-            bottom: 0;
-            width: 3px;
-            background: var(--color-up);
-            opacity: 0.8;
-        }
-
-        .card[data-status="down"]::before { background: var(--color-down); }
-        .card[data-status="degraded"]::before { background: var(--color-degraded); }
-
-        .card:hover {
+        .row:hover {
             border-color: var(--color-border-hover);
-            transform: translateY(-2px);
             box-shadow:
                 0 20px 40px -15px rgba(0, 0, 0, 0.5),
-                0 0 60px -20px rgba(6, 182, 212, 0.15);
+                0 0 60px -20px rgba(6, 182, 212, 0.12);
         }
 
-        @media (hover: none) {
-            .card:hover { transform: none; }
-        }
-
-        .card-head {
+        .row-head {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 12px;
-            margin-bottom: 16px;
+            gap: 16px;
+            margin-bottom: 14px;
         }
-
-        .card-name {
+        .row-name {
             display: flex;
             align-items: center;
             gap: 10px;
             font-family: var(--font-heading);
-            font-size: 1.125rem;
+            font-size: 1.0625rem;
             font-weight: 600;
+            color: var(--color-text-primary);
         }
-
-        .card-name img {
+        .row-name img {
             width: 16px;
             height: 16px;
             border-radius: 4px;
+            opacity: 0.9;
         }
-
-        .pill {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 4px 10px;
-            border-radius: 9999px;
-            font-size: 12px;
-            font-weight: 600;
-            font-family: var(--font-heading);
-            text-transform: uppercase;
-            letter-spacing: 0.04em;
-        }
-
-        .pill.up {
-            background: rgba(6, 182, 212, 0.12);
-            color: var(--color-up);
-            border: 1px solid rgba(6, 182, 212, 0.25);
-        }
-
-        .pill.down {
-            background: rgba(244, 63, 94, 0.12);
-            color: var(--color-down);
-            border: 1px solid rgba(244, 63, 94, 0.25);
-        }
-
-        .pill.degraded {
-            background: rgba(245, 158, 11, 0.12);
-            color: var(--color-degraded);
-            border: 1px solid rgba(245, 158, 11, 0.25);
-        }
-
-        .pill-dot {
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background: currentColor;
-            box-shadow: 0 0 8px currentColor;
-        }
-
-        .card-stats {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-        }
-
-        .stat {
-            background: rgba(10, 15, 30, 0.4);
-            border: 1px solid var(--color-border);
-            border-radius: 8px;
-            padding: 10px 12px;
-        }
-
-        .stat-label {
-            display: block;
+        .row-name small {
             color: var(--color-text-muted);
-            font-size: 11px;
             font-weight: 500;
-            text-transform: uppercase;
-            letter-spacing: 0.06em;
-            margin-bottom: 4px;
-            font-family: var(--font-heading);
+            font-family: var(--font-body);
         }
-
-        .stat-value {
+        .row-status {
             font-family: var(--font-heading);
-            font-size: 18px;
-            font-weight: 700;
-            color: var(--color-text-primary);
+            font-weight: 600;
+            font-size: 14px;
         }
+        .row-status.up { color: var(--color-up); }
+        .row-status.degraded { color: var(--color-degraded); }
+        .row-status.down { color: var(--color-down); }
 
-        .card-url {
-            display: block;
+        /* ---- Bar chart ---- */
+        .bars {
+            display: flex;
+            gap: 2px;
+            align-items: stretch;
+            height: 36px;
+        }
+        .bars-day {
+            flex: 1 1 0;
+            min-width: 0;
+            border-radius: 2px;
+            transition: transform 0.15s ease, filter 0.15s ease;
+            position: relative;
+        }
+        .bars-day:hover {
+            transform: scaleY(1.08);
+            filter: brightness(1.25);
+        }
+        .bars-day.up { background: var(--color-up); }
+        .bars-day.mild { background: var(--color-mild); }
+        .bars-day.degraded { background: var(--color-degraded); }
+        .bars-day.down { background: var(--color-down); }
+        .bars-day.no-data { background: var(--color-no-data); }
+
+        /* Tooltip via title attr — keep CSS only, no JS popovers needed.
+           Modern browsers render the title attribute natively on hover. */
+
+        .row-foot {
+            margin-top: 10px;
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            align-items: center;
+            gap: 12px;
             color: var(--color-text-muted);
             font-size: 12px;
-            margin-top: 12px;
-            word-break: break-all;
-            font-family: ui-monospace, "SF Mono", monospace;
+            font-family: var(--font-heading);
         }
-
-        .card-url:hover {
-            color: var(--color-accent-cyan);
+        .row-foot .axis-label {
+            color: var(--color-text-muted);
         }
-
-        /* ---- Loading ---- */
-        .loader {
-            grid-column: 1 / -1;
+        .row-foot .axis-rule {
+            height: 1px;
+            background: var(--color-border);
+        }
+        .row-foot .pct {
+            text-align: center;
+            color: var(--color-text-secondary);
+            font-weight: 600;
+            white-space: nowrap;
+        }
+        .row-foot .right {
+            text-align: right;
+        }
+        .row-foot .axis-with-rule {
             display: flex;
             align-items: center;
-            justify-content: center;
-            padding: 60px 24px;
-            color: var(--color-text-muted);
+            gap: 10px;
         }
+        .row-foot .axis-with-rule.left { justify-content: flex-start; }
+        .row-foot .axis-with-rule.right { justify-content: flex-end; }
+        .row-foot .axis-with-rule .axis-rule { flex: 1; }
 
+        /* ---- Loader / error ---- */
+        .loader, .error {
+            background: rgba(17, 24, 39, 0.5);
+            border: 1px solid var(--color-border);
+            border-radius: 12px;
+            padding: 40px;
+            text-align: center;
+            color: var(--color-text-muted);
+            font-family: var(--font-heading);
+        }
         .loader-spinner {
             width: 32px;
             height: 32px;
+            margin: 0 auto;
             border: 2px solid rgba(6, 182, 212, 0.2);
             border-top-color: var(--color-accent-cyan);
             border-radius: 50%;
             animation: spin 0.8s linear infinite;
         }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
         .error {
-            grid-column: 1 / -1;
             background: rgba(244, 63, 94, 0.08);
-            border: 1px solid rgba(244, 63, 94, 0.25);
+            border-color: rgba(244, 63, 94, 0.25);
             color: #FCA5A5;
-            border-radius: 12px;
-            padding: 24px;
-            text-align: center;
-            font-family: var(--font-heading);
         }
 
         /* ---- Footer ---- */
@@ -456,9 +363,8 @@
             text-align: center;
             color: var(--color-text-muted);
             font-size: 14px;
-            margin-top: 80px;
+            margin-top: 40px;
         }
-
         footer::before {
             content: "";
             position: absolute;
@@ -469,20 +375,21 @@
             background: var(--brand-gradient);
             opacity: 0.3;
         }
-
-        footer a {
-            color: var(--color-text-secondary);
-        }
-
-        footer a:hover {
-            color: var(--color-accent-cyan);
-        }
-
+        footer a { color: var(--color-text-secondary); }
+        footer a:hover { color: var(--color-accent-cyan); }
         .last-updated {
             display: block;
             margin-top: 8px;
             color: var(--color-text-muted);
             font-size: 12px;
+        }
+
+        /* ---- Mobile: collapse bar width but keep readability ---- */
+        @media (max-width: 640px) {
+            .bars { gap: 1px; height: 30px; }
+            .row { padding: 16px; }
+            .row-name { font-size: 1rem; }
+            .row-foot { font-size: 11px; }
         }
 
         @media (prefers-reduced-motion: reduce) {
@@ -496,8 +403,7 @@
 </head>
 
 <body>
-    <!-- Auto-unregister any stale Upptime service worker / cached pages from
-         the previous Sapper deploy so the new HTML actually wins. -->
+    <!-- Auto-unregister stale Upptime service worker / cached pages -->
     <script>
         if ("serviceWorker" in navigator) {
             navigator.serviceWorker.getRegistrations().then((regs) => {
@@ -540,18 +446,11 @@
         <p>Live and historical uptime for the ZiplineOS platform and portals. Checks run every 5 minutes from GitHub's infrastructure, independently of ZiplineOS.</p>
     </header>
 
-    <section class="range">
-        <h2>Live Status</h2>
-        <div class="range-tabs" role="tablist" aria-label="Time range">
-            <button data-range="Day" type="button">24h</button>
-            <button data-range="Week" type="button">7d</button>
-            <button data-range="Month" type="button">30d</button>
-            <button data-range="Year" type="button">1y</button>
-            <button data-range="" type="button" class="active">All</button>
-        </div>
-    </section>
+    <div class="section-head">
+        <span>Uptime over the past <strong>90 days</strong>.</span>
+    </div>
 
-    <main class="cards" id="cards" aria-live="polite">
+    <main class="rows" id="rows" aria-live="polite">
         <div class="loader">
             <div class="loader-spinner" aria-label="Loading status"></div>
         </div>
@@ -570,40 +469,71 @@
         (() => {
             const SUMMARY_URL = "https://raw.githubusercontent.com/CodeNexus26/ziplineos-status/master/history/summary.json";
             const REFRESH_MS = 60_000;
+            const DAYS_WINDOW = 90;
+            const MINUTES_PER_DAY = 24 * 60;
 
-            const cardsEl = document.getElementById("cards");
+            // Thresholds (minutes down per day) for bar color.
+            const T_MILD = 5;     // any blip
+            const T_DEGRADED = 60; // sustained issue
+            const T_DOWN = 240;    // major
+
+            const rowsEl = document.getElementById("rows");
             const bannerEl = document.getElementById("status-banner");
             const bannerTextEl = document.getElementById("status-banner-text");
             const lastUpdatedEl = document.getElementById("last-updated");
-            const rangeTabs = document.querySelectorAll(".range-tabs button");
 
-            let currentRange = "";
-            let cachedSummary = null;
-
-            const fmtMs = (ms) => {
-                if (ms == null || Number.isNaN(ms)) return "—";
-                if (ms < 1000) return `${Math.round(ms)} ms`;
-                return `${(ms / 1000).toFixed(2)} s`;
+            const fmtDate = (d) => {
+                const y = d.getUTCFullYear();
+                const m = String(d.getUTCMonth() + 1).padStart(2, "0");
+                const dd = String(d.getUTCDate()).padStart(2, "0");
+                return `${y}-${m}-${dd}`;
             };
+
+            const fmtDisplayDate = (d) => d.toLocaleDateString(undefined, {
+                year: "numeric", month: "short", day: "numeric",
+            });
 
             const fmtUptime = (str) => (str ?? "—");
 
-            const fmtRangeLabel = (range) => {
-                if (range === "Day") return "24h";
-                if (range === "Week") return "7 days";
-                if (range === "Month") return "30 days";
-                if (range === "Year") return "1 year";
-                return "All time";
+            const dayClass = (minDown) => {
+                if (minDown <= 0) return "up";
+                if (minDown < T_MILD) return "up";
+                if (minDown < T_DEGRADED) return "mild";
+                if (minDown < T_DOWN) return "degraded";
+                return "down";
             };
 
-            const render = (sites, range) => {
+            const buildBars = (site) => {
+                const today = new Date();
+                today.setUTCHours(0, 0, 0, 0);
+                const minDownMap = site.dailyMinutesDown || {};
+
+                let totalMin = 0;
+                let downMin = 0;
+                const bars = [];
+                for (let i = DAYS_WINDOW - 1; i >= 0; i--) {
+                    const d = new Date(today);
+                    d.setUTCDate(today.getUTCDate() - i);
+                    const key = fmtDate(d);
+                    const minDown = minDownMap[key] || 0;
+                    totalMin += MINUTES_PER_DAY;
+                    downMin += minDown;
+                    const cls = dayClass(minDown);
+                    const upPct = ((MINUTES_PER_DAY - minDown) / MINUTES_PER_DAY) * 100;
+                    const title = minDown > 0
+                        ? `${fmtDisplayDate(d)} · ${upPct.toFixed(2)}% uptime · ${minDown} min down`
+                        : `${fmtDisplayDate(d)} · 100% uptime`;
+                    bars.push(`<div class="bars-day ${cls}" title="${title}" role="img" aria-label="${title}"></div>`);
+                }
+                const upPct90 = ((totalMin - downMin) / totalMin) * 100;
+                return { bars: bars.join(""), upPct90 };
+            };
+
+            const render = (sites) => {
                 if (!sites?.length) {
-                    cardsEl.innerHTML = `<div class="error">No sites configured.</div>`;
+                    rowsEl.innerHTML = `<div class="error">No sites configured.</div>`;
                     return;
                 }
-
-                const uptimeKey = range ? `uptime${range}` : "uptime";
-                const timeKey = range ? `time${range}` : "time";
 
                 let downCount = 0;
                 let degradedCount = 0;
@@ -612,33 +542,35 @@
                     const status = (s.status || "up").toLowerCase();
                     if (status === "down") downCount++;
                     else if (status !== "up") degradedCount++;
-                    const pillLabel = status === "up" ? "Operational" : status === "down" ? "Down" : status;
+                    const statusLabel = status === "up" ? "Operational" : status === "down" ? "Down" : status.charAt(0).toUpperCase() + status.slice(1);
                     const icon = s.icon ? `<img src="${s.icon}" alt="" onerror="this.style.display='none'" />` : "";
-                    const url = s.url || "#";
+                    const { bars, upPct90 } = buildBars(s);
+                    const host = (() => { try { return new URL(s.url).host; } catch { return s.url; } })();
                     return `
-                        <article class="card" data-status="${status}">
-                            <div class="card-head">
-                                <div class="card-name">${icon}<span>${s.name}</span></div>
-                                <span class="pill ${status}"><span class="pill-dot"></span>${pillLabel}</span>
+                        <article class="row" data-status="${status}">
+                            <div class="row-head">
+                                <div class="row-name">${icon}<span>${s.name}</span><small>· ${host}</small></div>
+                                <div class="row-status ${status}">${statusLabel}</div>
                             </div>
-                            <div class="card-stats">
-                                <div class="stat">
-                                    <span class="stat-label">Uptime · ${fmtRangeLabel(range)}</span>
-                                    <span class="stat-value">${fmtUptime(s[uptimeKey])}</span>
+                            <div class="bars" role="img" aria-label="${s.name} uptime over the past ${DAYS_WINDOW} days">
+                                ${bars}
+                            </div>
+                            <div class="row-foot">
+                                <div class="axis-with-rule left">
+                                    <span class="axis-label">${DAYS_WINDOW} days ago</span>
+                                    <span class="axis-rule"></span>
                                 </div>
-                                <div class="stat">
-                                    <span class="stat-label">Response</span>
-                                    <span class="stat-value">${fmtMs(s[timeKey])}</span>
+                                <div class="pct">${upPct90.toFixed(2)}% uptime</div>
+                                <div class="axis-with-rule right">
+                                    <span class="axis-rule"></span>
+                                    <span class="axis-label">Today</span>
                                 </div>
                             </div>
-                            <a class="card-url" href="${url}" target="_blank" rel="noopener">${url}</a>
                         </article>
                     `;
                 }).join("");
+                rowsEl.innerHTML = html;
 
-                cardsEl.innerHTML = html;
-
-                // Overall banner
                 if (downCount > 0) {
                     bannerEl.className = "status-banner down";
                     bannerTextEl.textContent = `${downCount} ${downCount === 1 ? "service is" : "services are"} down`;
@@ -652,7 +584,7 @@
             };
 
             const renderError = (err) => {
-                cardsEl.innerHTML = `<div class="error">Couldn't load status data — ${err}</div>`;
+                rowsEl.innerHTML = `<div class="error">Couldn't load status data — ${err}</div>`;
                 bannerEl.className = "status-banner degraded";
                 bannerTextEl.textContent = "Status data unavailable";
             };
@@ -663,22 +595,12 @@
                     const res = await fetch(url, { cache: "no-store" });
                     if (!res.ok) throw new Error(`HTTP ${res.status}`);
                     const data = await res.json();
-                    cachedSummary = data;
-                    render(data, currentRange);
+                    render(data);
                     lastUpdatedEl.textContent = `Last refreshed ${new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" })}`;
                 } catch (err) {
                     renderError(err.message || err);
                 }
             };
-
-            rangeTabs.forEach((btn) => {
-                btn.addEventListener("click", () => {
-                    rangeTabs.forEach((b) => b.classList.remove("active"));
-                    btn.classList.add("active");
-                    currentRange = btn.dataset.range || "";
-                    if (cachedSummary) render(cachedSummary, currentRange);
-                });
-            });
 
             fetchSummary();
             setInterval(fetchSummary, REFRESH_MS);

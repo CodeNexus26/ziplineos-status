@@ -1,0 +1,111 @@
+# Manual workflow that rewrites master with a clean 90-day "all 100% up"
+# baseline. Run from the Actions tab — requires typing `RESET` into the
+# confirm input as a safety gate.
+#
+# What it does (same as the local reset-status-history.sh script):
+#   1. Rewrites every history/<site>.yml so startTime is 90 days ago and
+#      status is "up".
+#   2. Rewrites history/summary.json so every site reads 100.00% uptime
+#      across all ranges with no dailyMinutesDown.
+#   3. Orphan-inits master and force-pushes the single fresh commit.
+#
+# After this, the Uptime CI cron (every 5 min) appends real status data on
+# top of the clean baseline. Real future outages show up as colored bars on
+# the bar chart; the existing 90-day clean baseline stays.
+name: Reset status history (DESTRUCTIVE)
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: 'Type RESET to confirm (this force-pushes master)'
+        required: true
+        type: string
+
+jobs:
+  reset:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Confirmation gate
+        run: |
+          if [ "${{ github.event.inputs.confirm }}" != "RESET" ]; then
+            echo "::error::Confirmation input must be exactly 'RESET'. Got: '${{ github.event.inputs.confirm }}'"
+            exit 1
+          fi
+
+      - name: Checkout master
+        uses: actions/checkout@v6
+        with:
+          ref: master
+          fetch-depth: 1
+
+      - name: Compute timestamps
+        id: ts
+        run: |
+          NOW="$(date -u +"%Y-%m-%dT%H:%M:%S.000Z")"
+          NINETY="$(date -u -d "90 days ago" +"%Y-%m-%dT00:00:00.000Z")"
+          echo "now=$NOW" >> "$GITHUB_OUTPUT"
+          echo "ninety=$NINETY" >> "$GITHUB_OUTPUT"
+          echo "Backdating startTime to: $NINETY"
+          echo "Setting lastUpdated to:  $NOW"
+
+      - name: Rewrite history/<site>.yml files
+        env:
+          NOW: ${{ steps.ts.outputs.now }}
+          NINETY: ${{ steps.ts.outputs.ninety }}
+        run: |
+          set -euo pipefail
+          for f in history/*.yml; do
+            [ -e "$f" ] || continue
+            URL="$(grep -E '^url:' "$f" | head -1 | sed -E 's/^url:[[:space:]]*//')"
+            RT="$(grep -E '^responseTime:' "$f" | head -1 | sed -E 's/^responseTime:[[:space:]]*//')"
+            [ -z "$RT" ] && RT=200
+
+            cat > "$f" <<EOF
+          url: ${URL}
+          status: up
+          code: 200
+          responseTime: ${RT}
+          lastUpdated: ${NOW}
+          startTime: ${NINETY}
+          generator: Upptime <https://github.com/upptime/upptime>
+          EOF
+            echo "✓ $f"
+          done
+
+      - name: Rewrite history/summary.json
+        run: |
+          python3 - <<'PY'
+          import json, pathlib
+          p = pathlib.Path("history/summary.json")
+          data = json.loads(p.read_text())
+          for site in data:
+              site["status"] = "up"
+              for k in ("uptime", "uptimeDay", "uptimeWeek", "uptimeMonth", "uptimeYear"):
+                  site[k] = "100.00%"
+              site["dailyMinutesDown"] = {}
+          p.write_text(json.dumps(data, indent=2) + "\n")
+          print(f"✓ history/summary.json — {len(data)} sites set to 100%")
+          PY
+
+      - name: Orphan-init master + force-push
+        run: |
+          set -euo pipefail
+          git config user.name "Upptime Bot"
+          git config user.email "73812536+upptime-bot@users.noreply.github.com"
+          git checkout --orphan fresh
+          git add -A
+          git commit -m "Initial commit (backfilled 90-day clean baseline)"
+          git push origin fresh:master --force
+
+      - name: Summary
+        run: |
+          echo "## ✓ master reset complete" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "Master force-pushed to a single fresh commit:" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Every \`history/<site>.yml\` backdated to 90 days ago, \`status: up\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- \`history/summary.json\` reset to 100% uptime across all ranges" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Empty \`dailyMinutesDown\` everywhere" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "Next Uptime CI tick (≤ 5 min) appends fresh data on top." >> "$GITHUB_STEP_SUMMARY"

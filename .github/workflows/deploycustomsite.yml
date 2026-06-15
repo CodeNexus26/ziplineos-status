@@ -1,0 +1,51 @@
+# Deploy the custom-branded status page to gh-pages.
+#
+# Replaces Upptime's standard Sapper site (.github/workflows/site.yml) with a
+# single-file index.html that mirrors the ZiplineOS marketing-site brand exactly
+# and pulls live status from history/summary.json via raw.githubusercontent.com.
+#
+# Re-runs on:
+#   * push to master that touches public/, history/summary.json, or this workflow
+#   * once a day (catch-up) and on manual dispatch
+name: Deploy custom status site
+on:
+  push:
+    branches: [master]
+    paths:
+      - "public/**"
+      - "history/summary.json"
+      - ".github/workflows/deploy-custom-site.yml"
+  schedule:
+    - cron: "0 1 * * *"
+  workflow_dispatch:
+concurrency:
+  group: ${{ github.repository }}-custom-site
+  cancel-in-progress: false
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Stage site
+        run: |
+          set -euo pipefail
+          mkdir -p _site
+          cp -R public/. _site/
+          # CNAME drives GitHub Pages to serve the custom domain.
+          echo "status.ziplineos.com.au" > _site/CNAME
+          # Prevent Jekyll processing.
+          touch _site/.nojekyll
+
+      - name: Deploy to gh-pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./_site
+          force_orphan: true
+          user_name: "Upptime Bot"
+          user_email: "73812536+upptime-bot@users.noreply.github.com"
+          commit_message: "deploy: custom branded status page (${{ github.sha }})"

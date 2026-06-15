@@ -1,0 +1,72 @@
+# ZiplineOS — Upptime configuration
+# -----------------------------------------------------------------------------
+# Copy this file to the ROOT of the dedicated public uptime repo
+# (e.g. CodeNexus26/ziplineos-status) as `.upptimerc.yml`.
+#
+# Why a separate PUBLIC repo: GitHub Actions minutes are unlimited on public
+# repos, so the 5-minute cron costs $0. The repo only ever stores the *public*
+# URLs below + their up/down history — no secrets, no platform code.
+#
+# Independence: the checks run on GitHub's infrastructure and the status page is
+# served from GitHub Pages, so both the *recording* and the *viewing* keep
+# working even if the entire ZiplineOS GCP project is down.
+# -----------------------------------------------------------------------------
+
+owner: CodeNexus26 # GitHub org/user that owns the uptime repo
+repo: ziplineos-status # the dedicated public repo (create it first)
+
+# Order matters on the generated page. Core platform first, then portals.
+sites:
+  # --- Core Platform (primary) ---
+  - name: API
+    url: https://api.ziplineos.com.au/health
+  - name: Kernel
+    url: https://admin.ziplineos.com.au
+  - name: Registry
+    url: https://id.ziplineos.com.au
+  # --- Portals & Services ---
+  - name: CRM
+    url: https://crm.ziplineos.com.au
+  - name: Broadcast
+    url: https://broadcast.ziplineos.com.au
+  - name: Input
+    url: https://input.ziplineos.com.au
+  - name: Collect
+    url: https://collect.ziplineos.com.au
+  - name: Drive
+    url: https://drive.ziplineos.com.au
+  - name: Telemetry
+    url: https://telemetry.ziplineos.com.au
+  - name: Protocol
+    url: https://protocol.ziplineos.com.au
+  - name: Logic
+    url: https://logic.ziplineos.com.au
+
+status-website:
+  # OPTIONAL custom domain for the status page. Point a CNAME at
+  # <owner>.github.io and uncomment. Host it OFF GCP so it survives a full
+  # platform outage (GitHub Pages already is — a custom domain just renames it).
+  # cname: status.ziplineos.com.au
+  baseUrl: /ziplineos-status
+  name: ZiplineOS Status
+  introTitle: "ZiplineOS System Status"
+  introMessage: "Live and historical uptime for the ZiplineOS platform and portals. Checks run every 5 minutes from GitHub's infrastructure, independently of ZiplineOS."
+  logoUrl: https://ziplineos.com.au/vite.svg
+  navbar:
+    - title: Status
+      href: /
+    - title: ZiplineOS
+      href: https://ziplineos.com.au
+
+# How often the cron runs (GitHub minimum is 5 minutes). Leave as default.
+# delay: 0
+
+# If a portal answers a health check with a redirect to a login page, Upptime
+# follows it and records the final status. Add per-site `expectedStatusCodes`
+# below only if a service legitimately returns a non-2xx (e.g. 401) when healthy.
+# Example:
+#   - name: Example
+#     url: https://example.ziplineos.com.au
+#     expectedStatusCodes:
+#       - 200
+#       - 401

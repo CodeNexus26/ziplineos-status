@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ZiplineOS Status</title>
+    <meta name="description" content="Live and historical uptime for the ZiplineOS platform and portals. Checks run every 5 minutes from GitHub's infrastructure, independently of ZiplineOS." />
+    <meta property="og:title" content="ZiplineOS Status" />
+    <meta property="og:description" content="Live uptime for the ZiplineOS platform and portals." />
+    <meta name="theme-color" content="#0A0F1E" />
+    <link rel="icon" href="/ziplineos_logo.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <style>
+        :root {
+            --color-canvas: #0A0F1E;
+            --color-surface: #111827;
+            --color-surface-hover: #1E293B;
+            --color-text-primary: #F1F5F9;
+            --color-text-secondary: #94A3B8;
+            --color-text-muted: #64748B;
+            --color-accent-cyan: #06B6D4;
+            --color-accent-violet: #8B5CF6;
+            --color-up: #06B6D4;
+            --color-down: #F43F5E;
+            --color-degraded: #F59E0B;
+            --color-border: rgba(255, 255, 255, 0.08);
+            --color-border-hover: rgba(255, 255, 255, 0.15);
+            --brand-gradient: linear-gradient(45deg, #8B5CF6 0%, #4989E5 66%, #06B6D4 100%);
+            --hero-gradient: linear-gradient(135deg, #0A0F1E 0%, #0F172A 50%, #1E1B4B 100%);
+            --font-heading: "Outfit", system-ui, -apple-system, sans-serif;
+            --font-body: "Work Sans", system-ui, -apple-system, sans-serif;
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background: var(--color-canvas);
+            color: var(--color-text-primary);
+            font-family: var(--font-body);
+            min-height: 100vh;
+            position: relative;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            line-height: 1.5;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background: var(--hero-gradient);
+            z-index: -2;
+            pointer-events: none;
+        }
+
+        body::after {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background-image: radial-gradient(circle, rgba(148, 163, 184, 0.05) 1px, transparent 1px);
+            background-size: 32px 32px;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        ::selection {
+            background: rgba(6, 182, 212, 0.25);
+            color: #F1F5F9;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: var(--font-heading);
+            color: var(--color-text-primary);
+            text-wrap: balance;
+            letter-spacing: -0.01em;
+            font-weight: 700;
+        }
+
+        a {
+            color: var(--color-accent-cyan);
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        a:hover {
+            color: #22D3EE;
+        }
+
+        /* ---- Navbar (matches marketing site Navbar.tsx: h-20 max-w-7xl px-6) ---- */
+        nav {
+            position: sticky;
+            top: 0;
+            inset-inline: 0;
+            height: 80px;
+            z-index: 100;
+            background-color: rgba(10, 15, 30, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .nav-inner {
+            position: relative;
+            max-width: 80rem; /* max-w-7xl = 1280px */
+            margin: 0 auto;
+            padding: 0 24px; /* px-6 */
+            height: 100%;
+        }
+
+        .logo-link {
+            position: absolute;
+            left: 24px;
+            top: 50%;
+            transform: translateY(-50%);
+            height: 32px; /* h-8 — same as marketing site */
+            display: inline-flex;
+            align-items: center;
+            gap: 12px; /* gap-3 */
+            text-decoration: none;
+            line-height: 1;
+        }
+
+        /* Hard-pin the logo against the global a:hover color change. */
+        .logo-link:hover,
+        .logo-link:focus,
+        .logo-link:active {
+            color: var(--color-text-primary);
+            opacity: 1;
+            text-decoration: none;
+        }
+
+        .logo-mark {
+            height: 100%; /* h-full of the 32px parent */
+            width: auto;
+            user-select: none;
+            -webkit-user-drag: none;
+            pointer-events: none;
+        }
+
+        .logo-wordmark {
+            height: 80%; /* h-[80%] of the 32px parent = 25.6px */
+            width: auto;
+            display: block;
+            pointer-events: none;
+        }
+
+        /* ---- Hero ---- */
+        .hero {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 80px 24px 48px;
+            text-align: left;
+        }
+
+        .status-banner {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 16px;
+            border-radius: 9999px;
+            background: rgba(17, 24, 39, 0.7);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--color-border);
+            font-family: var(--font-heading);
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 24px;
+        }
+
+        .status-banner.up { color: var(--color-up); }
+        .status-banner.degraded { color: var(--color-degraded); }
+        .status-banner.down { color: var(--color-down); }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: currentColor;
+            box-shadow: 0 0 12px currentColor;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.6; transform: scale(0.85); }
+        }
+
+        .hero h1 {
+            font-size: clamp(2rem, 5vw, 3rem);
+            font-weight: 800;
+            margin-bottom: 16px;
+        }
+
+        .hero p {
+            color: var(--color-text-secondary);
+            font-size: 1.125rem;
+            max-width: 65ch;
+            line-height: 1.6;
+        }
+
+        /* ---- Range selector ---- */
+        .range {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .range h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .range-tabs {
+            display: inline-flex;
+            background: rgba(17, 24, 39, 0.5);
+            border: 1px solid var(--color-border);
+            border-radius: 9999px;
+            padding: 4px;
+            gap: 2px;
+        }
+
+        .range-tabs button {
+            background: transparent;
+            border: 0;
+            padding: 6px 14px;
+            color: var(--color-text-secondary);
+            font-family: var(--font-heading);
+            font-weight: 500;
+            font-size: 13px;
+            border-radius: 9999px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .range-tabs button:hover {
+            color: var(--color-text-primary);
+        }
+
+        .range-tabs button.active {
+            background: var(--brand-gradient);
+            color: #0A0F1E;
+            font-weight: 700;
+        }
+
+        /* ---- Cards grid ---- */
+        .cards {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px 80px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 16px;
+        }
+
+        .card {
+            background: rgba(17, 24, 39, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--color-border);
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: var(--color-up);
+            opacity: 0.8;
+        }
+
+        .card[data-status="down"]::before { background: var(--color-down); }
+        .card[data-status="degraded"]::before { background: var(--color-degraded); }
+
+        .card:hover {
+            border-color: var(--color-border-hover);
+            transform: translateY(-2px);
+            box-shadow:
+                0 20px 40px -15px rgba(0, 0, 0, 0.5),
+                0 0 60px -20px rgba(6, 182, 212, 0.15);
+        }
+
+        @media (hover: none) {
+            .card:hover { transform: none; }
+        }
+
+        .card-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .card-name {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: var(--font-heading);
+            font-size: 1.125rem;
+            font-weight: 600;
+        }
+
+        .card-name img {
+            width: 16px;
+            height: 16px;
+            border-radius: 4px;
+        }
+
+        .pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            border-radius: 9999px;
+            font-size: 12px;
+            font-weight: 600;
+            font-family: var(--font-heading);
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .pill.up {
+            background: rgba(6, 182, 212, 0.12);
+            color: var(--color-up);
+            border: 1px solid rgba(6, 182, 212, 0.25);
+        }
+
+        .pill.down {
+            background: rgba(244, 63, 94, 0.12);
+            color: var(--color-down);
+            border: 1px solid rgba(244, 63, 94, 0.25);
+        }
+
+        .pill.degraded {
+            background: rgba(245, 158, 11, 0.12);
+            color: var(--color-degraded);
+            border: 1px solid rgba(245, 158, 11, 0.25);
+        }
+
+        .pill-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: currentColor;
+            box-shadow: 0 0 8px currentColor;
+        }
+
+        .card-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .stat {
+            background: rgba(10, 15, 30, 0.4);
+            border: 1px solid var(--color-border);
+            border-radius: 8px;
+            padding: 10px 12px;
+        }
+
+        .stat-label {
+            display: block;
+            color: var(--color-text-muted);
+            font-size: 11px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin-bottom: 4px;
+            font-family: var(--font-heading);
+        }
+
+        .stat-value {
+            font-family: var(--font-heading);
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--color-text-primary);
+        }
+
+        .card-url {
+            display: block;
+            color: var(--color-text-muted);
+            font-size: 12px;
+            margin-top: 12px;
+            word-break: break-all;
+            font-family: ui-monospace, "SF Mono", monospace;
+        }
+
+        .card-url:hover {
+            color: var(--color-accent-cyan);
+        }
+
+        /* ---- Loading ---- */
+        .loader {
+            grid-column: 1 / -1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 60px 24px;
+            color: var(--color-text-muted);
+        }
+
+        .loader-spinner {
+            width: 32px;
+            height: 32px;
+            border: 2px solid rgba(6, 182, 212, 0.2);
+            border-top-color: var(--color-accent-cyan);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .error {
+            grid-column: 1 / -1;
+            background: rgba(244, 63, 94, 0.08);
+            border: 1px solid rgba(244, 63, 94, 0.25);
+            color: #FCA5A5;
+            border-radius: 12px;
+            padding: 24px;
+            text-align: center;
+            font-family: var(--font-heading);
+        }
+
+        /* ---- Footer ---- */
+        footer {
+            position: relative;
+            background: rgba(17, 24, 39, 0.7);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid var(--color-border);
+            padding: 32px 24px;
+            text-align: center;
+            color: var(--color-text-muted);
+            font-size: 14px;
+            margin-top: 80px;
+        }
+
+        footer::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: -1px;
+            height: 1px;
+            background: var(--brand-gradient);
+            opacity: 0.3;
+        }
+
+        footer a {
+            color: var(--color-text-secondary);
+        }
+
+        footer a:hover {
+            color: var(--color-accent-cyan);
+        }
+
+        .last-updated {
+            display: block;
+            margin-top: 8px;
+            color: var(--color-text-muted);
+            font-size: 12px;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Auto-unregister any stale Upptime service worker / cached pages from
+         the previous Sapper deploy so the new HTML actually wins. -->
+    <script>
+        if ("serviceWorker" in navigator) {
+            navigator.serviceWorker.getRegistrations().then((regs) => {
+                for (const reg of regs) reg.unregister();
+            }).catch(() => { });
+        }
+        if ("caches" in window) {
+            caches.keys().then((keys) => {
+                for (const k of keys) caches.delete(k);
+            }).catch(() => { });
+        }
+    </script>
+
+    <nav aria-label="Main navigation">
+        <div class="nav-inner">
+            <a class="logo-link" href="https://ziplineos.com.au" aria-label="Back to ZiplineOS">
+                <img class="logo-mark" src="/ziplineos_logo.png" alt="" aria-hidden="true" draggable="false" />
+                <svg class="logo-wordmark" viewBox="0 0 155 32" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="ZiplineOS">
+                    <defs>
+                        <linearGradient id="logo-gradient" x1="0%" y1="100%" x2="100%" y2="0%">
+                            <stop offset="0%" stop-color="#8B5CF6" />
+                            <stop offset="66%" stop-color="#4989E5" />
+                            <stop offset="100%" stop-color="#06B6D4" />
+                        </linearGradient>
+                    </defs>
+                    <text x="0" y="24" font-family="Outfit, system-ui, sans-serif" font-size="26" font-weight="700" letter-spacing="-0.02em">
+                        <tspan fill="#F1F5F9">Zipline</tspan><tspan fill="url(#logo-gradient)">OS</tspan>
+                    </text>
+                </svg>
+            </a>
+        </div>
+    </nav>
+
+    <header class="hero">
+        <div id="status-banner" class="status-banner up" role="status">
+            <span class="status-dot"></span>
+            <span id="status-banner-text">Checking status…</span>
+        </div>
+        <h1>ZiplineOS System Status</h1>
+        <p>Live and historical uptime for the ZiplineOS platform and portals. Checks run every 5 minutes from GitHub's infrastructure, independently of ZiplineOS.</p>
+    </header>
+
+    <section class="range">
+        <h2>Live Status</h2>
+        <div class="range-tabs" role="tablist" aria-label="Time range">
+            <button data-range="Day" type="button">24h</button>
+            <button data-range="Week" type="button">7d</button>
+            <button data-range="Month" type="button">30d</button>
+            <button data-range="Year" type="button">1y</button>
+            <button data-range="" type="button" class="active">All</button>
+        </div>
+    </section>
+
+    <main class="cards" id="cards" aria-live="polite">
+        <div class="loader">
+            <div class="loader-spinner" aria-label="Loading status"></div>
+        </div>
+    </main>
+
+    <footer>
+        <div>
+            <a href="https://github.com/CodeNexus26/ziplineos-status" rel="noopener">Open source</a>
+            · Powered by <a href="https://upptime.js.org" rel="noopener">Upptime</a>
+            · <a href="https://ziplineos.com.au">Back to ZiplineOS</a>
+        </div>
+        <span class="last-updated" id="last-updated"></span>
+    </footer>
+
+    <script>
+        (() => {
+            const SUMMARY_URL = "https://raw.githubusercontent.com/CodeNexus26/ziplineos-status/master/history/summary.json";
+            const REFRESH_MS = 60_000;
+
+            const cardsEl = document.getElementById("cards");
+            const bannerEl = document.getElementById("status-banner");
+            const bannerTextEl = document.getElementById("status-banner-text");
+            const lastUpdatedEl = document.getElementById("last-updated");
+            const rangeTabs = document.querySelectorAll(".range-tabs button");
+
+            let currentRange = "";
+            let cachedSummary = null;
+
+            const fmtMs = (ms) => {
+                if (ms == null || Number.isNaN(ms)) return "—";
+                if (ms < 1000) return `${Math.round(ms)} ms`;
+                return `${(ms / 1000).toFixed(2)} s`;
+            };
+
+            const fmtUptime = (str) => (str ?? "—");
+
+            const fmtRangeLabel = (range) => {
+                if (range === "Day") return "24h";
+                if (range === "Week") return "7 days";
+                if (range === "Month") return "30 days";
+                if (range === "Year") return "1 year";
+                return "All time";
+            };
+
+            const render = (sites, range) => {
+                if (!sites?.length) {
+                    cardsEl.innerHTML = `<div class="error">No sites configured.</div>`;
+                    return;
+                }
+
+                const uptimeKey = range ? `uptime${range}` : "uptime";
+                const timeKey = range ? `time${range}` : "time";
+
+                let downCount = 0;
+                let degradedCount = 0;
+
+                const html = sites.map((s) => {
+                    const status = (s.status || "up").toLowerCase();
+                    if (status === "down") downCount++;
+                    else if (status !== "up") degradedCount++;
+                    const pillLabel = status === "up" ? "Operational" : status === "down" ? "Down" : status;
+                    const icon = s.icon ? `<img src="${s.icon}" alt="" onerror="this.style.display='none'" />` : "";
+                    const url = s.url || "#";
+                    return `
+                        <article class="card" data-status="${status}">
+                            <div class="card-head">
+                                <div class="card-name">${icon}<span>${s.name}</span></div>
+                                <span class="pill ${status}"><span class="pill-dot"></span>${pillLabel}</span>
+                            </div>
+                            <div class="card-stats">
+                                <div class="stat">
+                                    <span class="stat-label">Uptime · ${fmtRangeLabel(range)}</span>
+                                    <span class="stat-value">${fmtUptime(s[uptimeKey])}</span>
+                                </div>
+                                <div class="stat">
+                                    <span class="stat-label">Response</span>
+                                    <span class="stat-value">${fmtMs(s[timeKey])}</span>
+                                </div>
+                            </div>
+                            <a class="card-url" href="${url}" target="_blank" rel="noopener">${url}</a>
+                        </article>
+                    `;
+                }).join("");
+
+                cardsEl.innerHTML = html;
+
+                // Overall banner
+                if (downCount > 0) {
+                    bannerEl.className = "status-banner down";
+                    bannerTextEl.textContent = `${downCount} ${downCount === 1 ? "service is" : "services are"} down`;
+                } else if (degradedCount > 0) {
+                    bannerEl.className = "status-banner degraded";
+                    bannerTextEl.textContent = `${degradedCount} ${degradedCount === 1 ? "service is" : "services are"} degraded`;
+                } else {
+                    bannerEl.className = "status-banner up";
+                    bannerTextEl.textContent = "All systems operational";
+                }
+            };
+
+            const renderError = (err) => {
+                cardsEl.innerHTML = `<div class="error">Couldn't load status data — ${err}</div>`;
+                bannerEl.className = "status-banner degraded";
+                bannerTextEl.textContent = "Status data unavailable";
+            };
+
+            const fetchSummary = async () => {
+                try {
+                    const url = `${SUMMARY_URL}?t=${Date.now()}`;
+                    const res = await fetch(url, { cache: "no-store" });
+                    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                    const data = await res.json();
+                    cachedSummary = data;
+                    render(data, currentRange);
+                    lastUpdatedEl.textContent = `Last refreshed ${new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" })}`;
+                } catch (err) {
+                    renderError(err.message || err);
+                }
+            };
+
+            rangeTabs.forEach((btn) => {
+                btn.addEventListener("click", () => {
+                    rangeTabs.forEach((b) => b.classList.remove("active"));
+                    btn.classList.add("active");
+                    currentRange = btn.dataset.range || "";
+                    if (cachedSummary) render(cachedSummary, currentRange);
+                });
+            });
+
+            fetchSummary();
+            setInterval(fetchSummary, REFRESH_MS);
+        })();
+    </script>
+</body>
+
+</html>

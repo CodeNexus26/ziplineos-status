@@ -5,7 +5,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>ZiplineOS Status</title>
-    <meta name="description" content="Live and historical uptime for the ZiplineOS platform and portals. Checks run every 5 minutes from GitHub's infrastructure, independently of ZiplineOS." />
+    <meta name="description" content="Live and historical uptime for the ZiplineOS platform and portals. Monitoring runs independently of our own systems to keep this status accurate and available." />
     <meta property="og:title" content="ZiplineOS Status" />
     <meta property="og:description" content="Live uptime for the ZiplineOS platform and portals." />
     <meta name="theme-color" content="#0A0F1E" />
@@ -141,11 +141,73 @@
             pointer-events: none;
         }
 
+        /* ---- Notices / notifications ---- */
+        .notices {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 24px 24px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .notice {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            padding: 16px 20px;
+            border-radius: 12px;
+            background: rgba(17, 24, 39, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--color-border);
+        }
+        .notice--maintenance {
+            border-color: rgba(245, 158, 11, 0.35);
+            background: rgba(245, 158, 11, 0.08);
+        }
+        .notice-icon {
+            flex: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 9999px;
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--color-degraded);
+        }
+        .notice-icon svg {
+            width: 20px;
+            height: 20px;
+        }
+        .notice-body {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            min-width: 0;
+        }
+        .notice-title {
+            font-family: var(--font-heading);
+            font-weight: 600;
+            font-size: 15px;
+            color: var(--color-text-primary);
+        }
+        .notice-text {
+            color: var(--color-text-secondary);
+            font-size: 14px;
+            line-height: 1.55;
+            max-width: 70ch;
+        }
+
         /* ---- Hero ---- */
         .hero {
             max-width: 1200px;
             margin: 0 auto;
             padding: 80px 24px 32px;
+        }
+        /* When a notice sits above the hero, pull the heading up a touch. */
+        .notices + .hero {
+            padding-top: 40px;
         }
         .status-banner {
             display: inline-flex;
@@ -440,13 +502,27 @@
         </div>
     </nav>
 
+    <section class="notices" aria-label="Service notices">
+        <div class="notice notice--maintenance" role="note">
+            <span class="notice-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
+                </svg>
+            </span>
+            <div class="notice-body">
+                <strong class="notice-title">Scheduled maintenance — Friday 19 June, 7:00–8:00 PM</strong>
+                <p class="notice-text">We're carrying out planned maintenance during this window. Some services may be briefly unavailable, so there's a possibility of short downtime — though in many cases you may not notice any interruption at all. Thanks for your patience.</p>
+            </div>
+        </div>
+    </section>
+
     <header class="hero">
         <div id="status-banner" class="status-banner up" role="status">
             <span class="status-dot"></span>
             <span id="status-banner-text">Checking status…</span>
         </div>
         <h1>ZiplineOS System Status</h1>
-        <p>Live and historical uptime for the ZiplineOS platform and portals. Checks run every 5 minutes from GitHub's infrastructure, independently of ZiplineOS.</p>
+        <p>Live and historical uptime for the ZiplineOS platform and portals. Monitoring runs independently of our own systems, so this page stays accurate and available even during an outage.</p>
     </header>
 
     <div class="section-head">
@@ -461,9 +537,7 @@
 
     <footer>
         <div>
-            <a href="https://github.com/CodeNexus26/ziplineos-status" rel="noopener">Open source</a>
-            · Powered by <a href="https://upptime.js.org" rel="noopener">Upptime</a>
-            · <a href="https://ziplineos.com.au">Back to ZiplineOS</a>
+            Powered by <a href="https://upptime.js.org" rel="noopener">Upptime</a>
         </div>
         <span class="last-updated" id="last-updated"></span>
     </footer>

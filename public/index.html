@@ -141,11 +141,11 @@
             pointer-events: none;
         }
 
-        /* ---- Notices / notifications ---- */
+        /* ---- Notices / notifications — sits between the hero and the monitors ---- */
         .notices {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 24px 24px 0;
+            padding: 8px 24px 24px;
             display: flex;
             flex-direction: column;
             gap: 12px;
@@ -204,10 +204,6 @@
             max-width: 1200px;
             margin: 0 auto;
             padding: 80px 24px 32px;
-        }
-        /* When a notice sits above the hero, pull the heading up a touch. */
-        .notices + .hero {
-            padding-top: 40px;
         }
         .status-banner {
             display: inline-flex;
@@ -502,6 +498,15 @@
         </div>
     </nav>
 
+    <header class="hero">
+        <div id="status-banner" class="status-banner up" role="status">
+            <span class="status-dot"></span>
+            <span id="status-banner-text">Checking status…</span>
+        </div>
+        <h1>ZiplineOS System Status</h1>
+        <p>Live and historical uptime for the ZiplineOS platform and portals. Monitoring runs independently of our own systems, so this page stays accurate and available even during an outage.</p>
+    </header>
+
     <section class="notices" aria-label="Service notices">
         <div class="notice notice--maintenance" role="note">
             <span class="notice-icon" aria-hidden="true">
@@ -515,15 +520,6 @@
             </div>
         </div>
     </section>
-
-    <header class="hero">
-        <div id="status-banner" class="status-banner up" role="status">
-            <span class="status-dot"></span>
-            <span id="status-banner-text">Checking status…</span>
-        </div>
-        <h1>ZiplineOS System Status</h1>
-        <p>Live and historical uptime for the ZiplineOS platform and portals. Monitoring runs independently of our own systems, so this page stays accurate and available even during an outage.</p>
-    </header>
 
     <div class="section-head">
         <span>Uptime over the past <strong>90 days</strong>.</span>

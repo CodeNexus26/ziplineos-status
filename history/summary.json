@@ -24,18 +24,20 @@
     "url": "https://admin.ziplineos.com.au",
     "icon": "https://icons.duckduckgo.com/ip3/admin.ziplineos.com.au.ico",
     "slug": "kernel",
-    "status": "up",
+    "status": "down",
     "uptime": "100.00%",
-    "uptimeDay": "100.00%",
-    "uptimeWeek": "100.00%",
+    "uptimeDay": "99.96%",
+    "uptimeWeek": "99.99%",
     "uptimeMonth": "100.00%",
     "uptimeYear": "100.00%",
-    "time": 232,
-    "timeDay": 309,
-    "timeWeek": 298,
-    "timeMonth": 235,
-    "timeYear": 232,
-    "dailyMinutesDown": {}
+    "time": 299,
+    "timeDay": 4651,
+    "timeWeek": 1385,
+    "timeMonth": 518,
+    "timeYear": 299,
+    "dailyMinutesDown": {
+      "2026-10-21": 1
+    }
   },
   {
     "name": "Registry",
